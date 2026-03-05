@@ -105,8 +105,12 @@
       const input = document.getElementById('taskInput');
       const text = input.value;
 
-      // BUG 4: tidak ada validasi — bisa tambah tugas kosong
-      tasks.push({ text: text, done: false });
+      // FIXED: validasi input kosong
+      if (text.trim() === '') {
+      alert('Tugas tidak boleh kosong!');
+     return;
+}
+tasks.push({ text: text, done: false });
       input.value = '';
       renderTasks();
     }
