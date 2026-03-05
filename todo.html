@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 8px 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      color: #444;
+    }
+
+    /* BUG 1: tombol hapus tidak punya warna, susah keliatan */
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #999;
+    }
+
+    /* BUG 2: tidak ada style untuk tugas yang sudah selesai */
+
+    .empty-msg {
+      text-align: center;
+      color: #aaa;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 To-Do List ku</h1>
+
+    <div class="input-area">
+      <input type="text" id="taskInput" placeholder="Tulis tugas baru..." />
+      <button onclick="tambahTugas()">Tambah</button>
+    </div>
+
+    <ul id="taskList"></ul>
+    <p class="empty-msg" id="emptyMsg">Belum ada tugas. Tambahkan sesuatu!</p>
+  </div>
+
+  <script>
+    // BUG 3: tasks tidak disimpan, kalau halaman di-refresh semua hilang
+    let tasks = [];
+
+    function tambahTugas() {
+      const input = document.getElementById('taskInput');
+      const text = input.value;
+
+      // BUG 4: tidak ada validasi — bisa tambah tugas kosong
+      tasks.push({ text: text, done: false });
+      input.value = '';
+      renderTasks();
+    }
+
+    function hapusTugas(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    function toggleDone(index) {
+      tasks[index].done = !tasks[index].done;
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      const emptyMsg = document.getElementById('emptyMsg');
+
+      list.innerHTML = '';
+
+      if (tasks.length === 0) {
+        emptyMsg.style.display = 'block';
+        return;
+      }
+
+      emptyMsg.style.display = 'none';
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+
+        // BUG 5: kalau tugas sudah done, tampilannya sama saja — tidak ada coret atau warna beda
+        li.innerHTML = `
+          <span onclick="toggleDone(${index})" style="cursor:pointer">
+            ${task.done ? '✅' : '⬜'} ${task.text}
+          </span>
+          <button class="delete-btn" onclick="hapusTugas(${index})">🗑️</button>
+        `;
+
+        list.appendChild(li);
+      });
+    }
+
+    // jalankan pertama kali
+    renderTasks();
+  </script>
+</body>
+</html>
